@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.query.Collation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
@@ -133,6 +134,7 @@ public abstract class AbstractReadService<T extends AbstractMongoEntity> extends
     Query query = new Query(criteria);
     long total = mongo.count(query, meta.getClassType());
     query.with(pageable);
+    query.collation(Collation.of("en").strength(Collation.ComparisonLevel.secondary()));
     List<T> data = mongo.find(query, meta.getClassType());
     return new PageImpl<T>(data, pageable, total);
   }
